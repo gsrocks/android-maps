@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -43,30 +44,32 @@ internal fun UserLocationScreen(
     onSave: (name: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        var nameUserLocation by remember { mutableStateOf("Compose") }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+    Scaffold { scaffoldPadding ->
+        Column(
+            modifier = modifier.padding(scaffoldPadding)
         ) {
-            TextField(
-                value = nameUserLocation,
-                onValueChange = { nameUserLocation = it }
-            )
+            var nameUserLocation by remember { mutableStateOf("Compose") }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TextField(
+                    value = nameUserLocation,
+                    onValueChange = { nameUserLocation = it }
+                )
 
-            Button(modifier = Modifier.width(96.dp), onClick = { onSave(nameUserLocation) }) {
-                Text("Save")
+                Button(modifier = Modifier.width(96.dp), onClick = { onSave(nameUserLocation) }) {
+                    Text("Save")
+                }
             }
-        }
-        items.forEach {
-            Text("Saved item: $it")
+            items.forEach {
+                Text("Saved item: $it")
+            }
         }
     }
 }
-
-// Previews
 
 @Preview(showBackground = true)
 @Composable
