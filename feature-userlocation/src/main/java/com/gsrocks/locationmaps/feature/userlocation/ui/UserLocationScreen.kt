@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gsrocks.locationmaps.core.ui.MyApplicationTheme
+import com.gsrocks.locationmaps.core.ui.clearFocus
 import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Success
 
 @Composable
@@ -44,7 +45,9 @@ internal fun UserLocationScreen(
     onSave: (name: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold { scaffoldPadding ->
+    Scaffold(
+        modifier = Modifier.clearFocus()
+    ) { scaffoldPadding ->
         Column(
             modifier = modifier.padding(scaffoldPadding)
         ) {
