@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gsrocks.locationmaps.core.ui.MyApplicationTheme
+import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
 import com.gsrocks.locationmaps.core.ui.clearFocus
 import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Success
 
@@ -77,7 +77,7 @@ internal fun UserLocationScreen(
 @Preview(showBackground = true)
 @Composable
 private fun DefaultPreview() {
-    MyApplicationTheme {
+    MapsLocationSampleTheme {
         UserLocationScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
     }
 }
@@ -85,7 +85,7 @@ private fun DefaultPreview() {
 @Preview(showBackground = true, widthDp = 480)
 @Composable
 private fun PortraitPreview() {
-    MyApplicationTheme {
+    MapsLocationSampleTheme {
         UserLocationScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
     }
 }
