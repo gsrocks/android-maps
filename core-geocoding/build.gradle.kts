@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gsrocks.locationmaps.core.data"
+    namespace = "com.gsrocks.locationmaps.core.geocoding"
     compileSdk = 33
 
     defaultConfig {
@@ -33,16 +33,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-database"))
-    implementation(project(":core-geocoding"))
+    implementation(libs.androidx.core.ktx)
 
     // Arch Components
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Local tests: jUnit, coroutines, Android runner
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
 }

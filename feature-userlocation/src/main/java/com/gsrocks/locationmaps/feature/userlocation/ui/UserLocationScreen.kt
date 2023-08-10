@@ -3,11 +3,9 @@ package com.gsrocks.locationmaps.feature.userlocation.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -15,29 +13,16 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
-import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Success
 
 @Composable
-fun UserLocationScreen(
-    modifier: Modifier = Modifier,
+fun UserLocationRoute(
     viewModel: UserLocationViewModel = hiltViewModel()
 ) {
-    val items by viewModel.uiState.collectAsStateWithLifecycle()
-    if (items is Success) {
-        UserLocationScreen(
-            items = (items as Success).data,
-            onSave = { name -> viewModel.addUserLocation(name) },
-            modifier = modifier
-        )
-    }
+    UserLocationScreen()
 }
 
 @Composable
-internal fun UserLocationScreen(
-    items: List<String>,
-    onSave: (name: String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun UserLocationScreen() {
     val singapore = LatLng(1.35, 103.87)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(singapore, 10f)
@@ -57,18 +42,10 @@ internal fun UserLocationScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun DefaultPreview() {
+private fun UserLocationScreenPreview() {
     MapsLocationSampleTheme {
-        UserLocationScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
-    }
-}
-
-@Preview(showBackground = true, widthDp = 480)
-@Composable
-private fun PortraitPreview() {
-    MapsLocationSampleTheme {
-        UserLocationScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
+        UserLocationScreen()
     }
 }
