@@ -4,6 +4,9 @@ import java.util.Properties
 val keystoreProperties = Properties().apply {
     load(FileInputStream(rootProject.file("signing/keystore.properties")))
 }
+val secrets = Properties().apply {
+    load(FileInputStream(rootProject.file("secrets.properties")))
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -32,6 +35,8 @@ android {
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
+
+        manifestPlaceholders["MAPS_API_KEY"] = secrets["MAPS_API_KEY"] as String
     }
 
     signingConfigs {
