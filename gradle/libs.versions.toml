@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.31.3-beta"
 androidGradlePlugin = "8.1.0"
 androidxActivity = "1.7.2"
 androidxComposeBom = "2023.06.01"
@@ -24,6 +25,7 @@ appcompat = "1.6.1"
 material = "1.8.0"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "androidxComposeCompiler" }

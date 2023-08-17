@@ -42,4 +42,18 @@ class UserLocationViewModel @Inject constructor(
     fun onSearchAction(query: String) {
         // TODO: implement
     }
+
+    fun showLocationPermissionRationale() {
+        _uiState.update {
+            it.copy(
+                showLocationRationale = true
+            )
+        }
+    }
+
+    fun dismissLocationPermissionRationale() {
+        _uiState.update {
+            it.copy(showLocationRationale = false)
+        }
+    }
 }
