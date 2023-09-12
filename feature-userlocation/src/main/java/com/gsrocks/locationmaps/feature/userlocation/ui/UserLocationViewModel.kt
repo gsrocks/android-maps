@@ -46,14 +46,14 @@ class UserLocationViewModel @Inject constructor(
     fun showLocationPermissionRationale() {
         _uiState.update {
             it.copy(
-                showLocationRationale = true
+                showLocationPermissionRationale = true
             )
         }
     }
 
     fun dismissLocationPermissionRationale() {
         _uiState.update {
-            it.copy(showLocationRationale = false)
+            it.copy(showLocationPermissionRationale = false)
         }
     }
 }

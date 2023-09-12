@@ -72,8 +72,15 @@ internal fun UserLocationScreen(
 
     LocationPermissionEffect(showRationale = showLocationPermissionRationale)
 
-    if (uiState.showLocationRationale) {
+    if (uiState.showLocationPermissionRationale) {
         LocationPermissionRationale(
+            onConfirm = onRationaleConfirm,
+            onDismissRequest = onRationaleDismiss
+        )
+    }
+
+    if (uiState.showLocationPrecisionRationale) {
+        LocationPrecisionRationale(
             onConfirm = onRationaleConfirm,
             onDismissRequest = onRationaleDismiss
         )
@@ -210,6 +217,28 @@ private fun LocationPermissionRationale(
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
                 Text("Deny")
+            }
+        }
+    )
+}
+
+@Composable
+fun LocationPrecisionRationale(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text("Upgrade location precision?") },
+        text = { Text("Let's upgrade your location precision, so we can make your experience better!") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Upgrade")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text("Cancel")
             }
         }
     )
