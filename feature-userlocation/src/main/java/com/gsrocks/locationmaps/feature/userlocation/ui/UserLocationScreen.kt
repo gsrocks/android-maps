@@ -65,7 +65,8 @@ fun UserLocationRoute(
         onRationaleConfirm = viewModel::dismissLocationPermissionRationale,
         onRationaleDismiss = viewModel::dismissLocationPermissionRationale,
         onSearchSuggestionClick = viewModel::onSearchSuggestionClick,
-        onErrorDismiss = viewModel::errorShown
+        onErrorDismiss = viewModel::errorShown,
+        onMyLocationClick = viewModel::onMyLocationClick
     )
 }
 
@@ -80,7 +81,8 @@ internal fun UserLocationScreen(
     onRationaleConfirm: () -> Unit,
     onRationaleDismiss: () -> Unit,
     onSearchSuggestionClick: (LocationAddress) -> Unit,
-    onErrorDismiss: (Int) -> Unit
+    onErrorDismiss: (Int) -> Unit,
+    onMyLocationClick: () -> Unit
 ) {
     SnackbarEffect(
         errorMessages = uiState.errorMessages,
@@ -109,6 +111,19 @@ internal fun UserLocationScreen(
         }
     }
 
+    LaunchedEffect(uiState.currentLocation) {
+        if (uiState.currentLocation != null) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newCameraPosition(
+                    CameraPosition.fromLatLngZoom(
+                        LatLng(uiState.currentLocation.latitude, uiState.currentLocation.longitude),
+                        15f
+                    )
+                )
+            )
+        }
+    }
+
     LocationPermissionEffect(showRationale = showLocationPermissionRationale)
 
     if (uiState.showLocationPermissionRationale) {
@@ -127,7 +142,7 @@ internal fun UserLocationScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            FloatingActionButton(onClick = onMyLocationClick) {
                 Icon(
                     imageVector = Icons.Default.LocationSearching,
                     contentDescription = stringResource(R.string.my_location)
@@ -331,7 +346,8 @@ private fun UserLocationScreenPreview() {
             onRationaleConfirm = {},
             onRationaleDismiss = {},
             onSearchSuggestionClick = {},
-            onErrorDismiss = {}
+            onErrorDismiss = {},
+            onMyLocationClick = {}
         )
     }
 }

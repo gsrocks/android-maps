@@ -38,4 +38,6 @@ dependencies {
     // Arch Components
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.play.services.location)
 }

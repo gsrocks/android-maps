@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.data.GeocodingRepository
+import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,11 +86,28 @@ class UserLocationViewModel @Inject constructor(
         }
     }
 
-    fun onSearchSuggestionClick(locationAddress: com.gsrocks.locationmaps.core.model.LocationAddress) {
+    fun onSearchSuggestionClick(locationAddress: LocationAddress) {
         _uiState.update {
             it.copy(
                 markerCoordinates = locationAddress.latitude to locationAddress.longitude,
                 searchActive = false
+            )
+        }
+    }
+
+    fun onMyLocationClick() {
+        viewModelScope.launch {
+            geocodingRepository.getCurrentLocation().fold(
+                onSuccess = { coordinates ->
+                    _uiState.update { state ->
+                        state.copy(
+                            currentLocation = coordinates
+                        )
+                    }
+                },
+                onFailure = {
+                    showError(R.string.failed_to_get_location)
+                }
             )
         }
     }
