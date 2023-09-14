@@ -19,11 +19,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -50,29 +53,41 @@ fun UserLocationRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     UserLocationScreen(
         uiState = uiState,
+        snackbarHostState = snackbarHostState,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onSearchActiveChange = viewModel::onSearchActiveChange,
         onSearchAction = viewModel::onSearchAction,
         showLocationPermissionRationale = viewModel::showLocationPermissionRationale,
         onRationaleConfirm = viewModel::dismissLocationPermissionRationale,
         onRationaleDismiss = viewModel::dismissLocationPermissionRationale,
-        onSearchSuggestionClick = viewModel::onSearchSuggestionClick
+        onSearchSuggestionClick = viewModel::onSearchSuggestionClick,
+        onErrorDismiss = viewModel::errorShown
     )
 }
 
 @Composable
 internal fun UserLocationScreen(
     uiState: UserLocationUiState,
+    snackbarHostState: SnackbarHostState,
     onSearchQueryChange: (String) -> Unit,
     onSearchActiveChange: (Boolean) -> Unit,
     onSearchAction: (String) -> Unit,
     showLocationPermissionRationale: () -> Unit,
     onRationaleConfirm: () -> Unit,
     onRationaleDismiss: () -> Unit,
-    onSearchSuggestionClick: (LocationAddress) -> Unit
+    onSearchSuggestionClick: (LocationAddress) -> Unit,
+    onErrorDismiss: (Int) -> Unit
 ) {
+    SnackbarEffect(
+        errorMessages = uiState.errorMessages,
+        snackbarHostState = snackbarHostState,
+        onErrorDismiss = onErrorDismiss
+    )
+
     val markerPosition = uiState.markerCoordinates?.let {
         LatLng(it.first, it.second)
     }
@@ -118,6 +133,9 @@ internal fun UserLocationScreen(
                     contentDescription = stringResource(R.string.my_location)
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { scaffoldPadding ->
         LocationSearchBar(
@@ -283,19 +301,37 @@ fun LocationPrecisionRationale(
     )
 }
 
+@Composable
+private fun SnackbarEffect(
+    errorMessages: List<Int>,
+    snackbarHostState: SnackbarHostState,
+    onErrorDismiss: (Int) -> Unit
+) {
+    if (errorMessages.isNotEmpty()) {
+        val errorMessageId = errorMessages.first()
+        val errorMessageText = stringResource(errorMessageId)
+        LaunchedEffect(errorMessageText, snackbarHostState) {
+            snackbarHostState.showSnackbar(message = errorMessageText)
+            onErrorDismiss(errorMessageId)
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun UserLocationScreenPreview() {
     MapsLocationSampleTheme {
         UserLocationScreen(
             uiState = UserLocationUiState(),
+            snackbarHostState = SnackbarHostState(),
             onSearchQueryChange = {},
             onSearchActiveChange = {},
             onSearchAction = {},
             showLocationPermissionRationale = {},
             onRationaleConfirm = {},
             onRationaleDismiss = {},
-            onSearchSuggestionClick = {}
+            onSearchSuggestionClick = {},
+            onErrorDismiss = {}
         )
     }
 }

@@ -1,9 +1,11 @@
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.data.GeocodingRepository
+import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,10 +79,7 @@ class UserLocationViewModel @Inject constructor(
                     }
                 },
                 onFailure = {
-                    _uiState.update { state ->
-                        state.copy(suggestions = emptyList())
-                    }
-                    // TODO: show error
+                    showError(R.string.geocoding_failed)
                 }
             )
         }
@@ -91,6 +90,23 @@ class UserLocationViewModel @Inject constructor(
             it.copy(
                 markerCoordinates = locationAddress.latitude to locationAddress.longitude,
                 searchActive = false
+            )
+        }
+    }
+
+    fun errorShown(messageId: Int) {
+        _uiState.update { state ->
+            val errorMessages = state.errorMessages.filterNot { it == messageId }
+            state.copy(errorMessages = errorMessages)
+        }
+    }
+
+    private fun showError(@StringRes id: Int) {
+        _uiState.update { state ->
+            val errorMessages = state.errorMessages + id
+            state.copy(
+                errorMessages = errorMessages,
+                suggestions = emptyList()
             )
         }
     }
