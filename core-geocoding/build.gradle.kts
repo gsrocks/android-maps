@@ -10,9 +10,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-
-        testInstrumentationRunner = "com.gsrocks.locationmaps.core.testing.HiltTestRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildFeatures {
@@ -33,6 +30,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-model"))
+    implementation(project(":core-common"))
+
     implementation(libs.androidx.core.ktx)
 
     // Arch Components

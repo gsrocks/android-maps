@@ -1,6 +1,6 @@
-package com.gsrocks.locationmaps.core.geocoding.models
+package com.gsrocks.locationmaps.core.model
 
-data class AddressModel(
+data class LocationAddress(
     val latitude: Double,
     val longitude: Double,
     val featureName: String?,

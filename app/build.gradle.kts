@@ -93,6 +93,7 @@ android {
 dependencies {
     implementation(project(":core-ui"))
     implementation(project(":feature-userlocation"))
+    implementation(project(":core-common"))
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)

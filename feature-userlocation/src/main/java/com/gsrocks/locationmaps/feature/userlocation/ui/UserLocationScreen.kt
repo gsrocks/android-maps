@@ -1,8 +1,11 @@
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -13,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -28,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -35,6 +40,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
 import com.gsrocks.locationmaps.feature.userlocation.R
 
@@ -51,7 +57,8 @@ fun UserLocationRoute(
         onSearchAction = viewModel::onSearchAction,
         showLocationPermissionRationale = viewModel::showLocationPermissionRationale,
         onRationaleConfirm = viewModel::dismissLocationPermissionRationale,
-        onRationaleDismiss = viewModel::dismissLocationPermissionRationale
+        onRationaleDismiss = viewModel::dismissLocationPermissionRationale,
+        onSearchSuggestionClick = viewModel::onSearchSuggestionClick
     )
 }
 
@@ -63,11 +70,28 @@ internal fun UserLocationScreen(
     onSearchAction: (String) -> Unit,
     showLocationPermissionRationale: () -> Unit,
     onRationaleConfirm: () -> Unit,
-    onRationaleDismiss: () -> Unit
+    onRationaleDismiss: () -> Unit,
+    onSearchSuggestionClick: (LocationAddress) -> Unit
 ) {
-    val singapore = LatLng(1.35, 103.87)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+    val markerPosition = uiState.markerCoordinates?.let {
+        LatLng(it.first, it.second)
+    }
+    val cameraPositionState = rememberCameraPositionState(uiState.markerCoordinates.toString()) {
+        if (markerPosition != null) {
+            position = CameraPosition.fromLatLngZoom(markerPosition, 10f)
+        }
+    }
+    LaunchedEffect(markerPosition) {
+        if (markerPosition != null) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newCameraPosition(
+                    CameraPosition.fromLatLngZoom(
+                        markerPosition,
+                        10f
+                    )
+                )
+            )
+        }
     }
 
     LocationPermissionEffect(showRationale = showLocationPermissionRationale)
@@ -101,7 +125,9 @@ internal fun UserLocationScreen(
             onQueryChange = onSearchQueryChange,
             onSearch = onSearchAction,
             active = uiState.searchActive,
-            onActiveChange = onSearchActiveChange
+            onActiveChange = onSearchActiveChange,
+            suggestions = uiState.suggestions,
+            onItemClick = onSearchSuggestionClick
         )
 
         GoogleMap(
@@ -110,11 +136,13 @@ internal fun UserLocationScreen(
             contentPadding = scaffoldPadding,
             uiSettings = MapUiSettings(zoomControlsEnabled = false)
         ) {
-            Marker(
-                state = MarkerState(position = singapore),
-                title = "Singapore",
-                snippet = "Marker in Singapore"
-            )
+            if (markerPosition != null) {
+                Marker(
+                    state = MarkerState(position = markerPosition),
+                    title = "Singapore",
+                    snippet = "Marker in Singapore",
+                )
+            }
         }
     }
 }
@@ -127,7 +155,9 @@ private fun LocationSearchBar(
     onSearch: (String) -> Unit,
     active: Boolean,
     onActiveChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    suggestions: List<LocationAddress>,
+    modifier: Modifier = Modifier,
+    onItemClick: (LocationAddress) -> Unit
 ) {
     SearchBar(
         query = query,
@@ -169,7 +199,16 @@ private fun LocationSearchBar(
             }
         }
     ) {
-        // TODO: implement
+        LazyColumn {
+            items(suggestions) { suggestion ->
+                ListItem(
+                    headlineContent = {
+                        Text(suggestion.featureName.orEmpty())
+                    },
+                    modifier = Modifier.clickable { onItemClick(suggestion) }
+                )
+            }
+        }
     }
 }
 
@@ -255,7 +294,8 @@ private fun UserLocationScreenPreview() {
             onSearchAction = {},
             showLocationPermissionRationale = {},
             onRationaleConfirm = {},
-            onRationaleDismiss = {}
+            onRationaleDismiss = {},
+            onSearchSuggestionClick = {}
         )
     }
 }

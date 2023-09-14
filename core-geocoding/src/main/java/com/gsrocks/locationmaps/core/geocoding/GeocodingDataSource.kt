@@ -1,9 +1,9 @@
 package com.gsrocks.locationmaps.core.geocoding
 
-import com.gsrocks.locationmaps.core.geocoding.models.AddressModel
+import com.gsrocks.locationmaps.core.model.LocationAddress
 
 interface GeocodingDataSource {
-    suspend fun getFromLocationName(locationName: String): List<AddressModel>
+    suspend fun getFromLocationName(locationName: String): List<LocationAddress>
 
-    suspend fun getFromCoordinates(latitude: Double, longitude: Double): List<AddressModel>
+    suspend fun getFromCoordinates(latitude: Double, longitude: Double): List<LocationAddress>
 }
