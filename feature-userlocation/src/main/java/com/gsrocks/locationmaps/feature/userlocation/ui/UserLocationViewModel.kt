@@ -1,39 +1,159 @@
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gsrocks.locationmaps.core.data.UserLocationRepository
-import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Error
-import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Loading
-import com.gsrocks.locationmaps.feature.userlocation.ui.UserLocationUiState.Success
+import com.google.android.gms.maps.model.LatLng
+import com.gsrocks.locationmaps.core.common.empty
+import com.gsrocks.locationmaps.core.data.GeocodingRepository
+import com.gsrocks.locationmaps.core.model.LocationAddress
+import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class UserLocationViewModel @Inject constructor(
-    private val userLocationRepository: UserLocationRepository
+    private val geocodingRepository: GeocodingRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<UserLocationUiState> = userLocationRepository
-        .userLocations.map<List<String>, UserLocationUiState> { Success(data = it) }
-        .catch { emit(Error(it)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
+    private val _uiState = MutableStateFlow(UserLocationUiState())
+    val uiState: StateFlow<UserLocationUiState> = _uiState.asStateFlow()
 
-    fun addUserLocation(name: String) {
+    private val _queryFlow = _uiState.map { it.query }
+        .debounce(250.milliseconds)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = String.empty
+        )
+
+    init {
         viewModelScope.launch {
-            userLocationRepository.add(name)
+            _queryFlow.collectLatest { onSearchQuery(it) }
         }
     }
-}
 
-sealed interface UserLocationUiState {
-    object Loading : UserLocationUiState
-    data class Error(val throwable: Throwable) : UserLocationUiState
-    data class Success(val data: List<String>) : UserLocationUiState
+    fun onSearchQueryChange(query: String) {
+        _uiState.update {
+            it.copy(query = query)
+        }
+    }
+
+    fun onSearchActiveChange(isActive: Boolean) {
+        _uiState.update {
+            it.copy(searchActive = isActive, query = "")
+        }
+    }
+
+    fun onSearchAction(query: String) {
+        // TODO: implement
+    }
+
+    fun showLocationPermissionRationale() {
+        _uiState.update {
+            it.copy(
+                showLocationPermissionRationale = true
+            )
+        }
+    }
+
+    fun dismissLocationPermissionRationale() {
+        _uiState.update {
+            it.copy(showLocationPermissionRationale = false)
+        }
+    }
+
+    private fun onSearchQuery(query: String) {
+        viewModelScope.launch {
+            geocodingRepository.getAddressByName(query).fold(
+                onSuccess = { addresses ->
+                    _uiState.update { state ->
+                        state.copy(suggestions = addresses)
+                    }
+                },
+                onFailure = {
+                    showError(R.string.geocoding_failed)
+                }
+            )
+        }
+    }
+
+    fun onSearchSuggestionClick(locationAddress: LocationAddress) {
+        _uiState.update {
+            it.copy(
+                markerCoordinates = locationAddress.latitude to locationAddress.longitude,
+                searchActive = false
+            )
+        }
+    }
+
+    fun onMyLocationClick() {
+        viewModelScope.launch {
+            geocodingRepository.getCurrentLocation().fold(
+                onSuccess = { coordinates ->
+                    _uiState.update { state ->
+                        state.copy(
+                            currentLocation = coordinates
+                        )
+                    }
+                },
+                onFailure = {
+                    showError(R.string.failed_to_get_location)
+                }
+            )
+        }
+    }
+
+    fun onMapClick(latLng: LatLng) {
+        viewModelScope.launch {
+            geocodingRepository.getAddressByCoordinates(latLng.latitude, latLng.longitude).fold(
+                onSuccess = { addresses ->
+                    addresses.firstOrNull()?.let { address ->
+                        _uiState.update { state ->
+                            state.copy(selectedAddressAddress = address)
+                        }
+                    }
+                },
+                onFailure = {
+                    showError(R.string.geocoding_failed)
+                }
+            )
+        }
+    }
+
+    fun onDismissBottomSheet() {
+        _uiState.update { state ->
+            state.copy(selectedAddressAddress = null)
+        }
+    }
+
+    fun errorShown(messageId: Int) {
+        _uiState.update { state ->
+            val errorMessages = state.errorMessages.filterNot { it == messageId }
+            state.copy(errorMessages = errorMessages)
+        }
+    }
+
+    private fun showError(@StringRes id: Int) {
+        _uiState.update { state ->
+            val errorMessages = state.errorMessages + id
+            state.copy(
+                errorMessages = errorMessages,
+                suggestions = emptyList()
+            )
+        }
+    }
 }

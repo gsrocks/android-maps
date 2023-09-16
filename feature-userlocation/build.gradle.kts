@@ -40,6 +40,9 @@ android {
 dependencies {
     implementation(project(":core-data"))
     implementation(project(":core-ui"))
+    implementation(project(":core-common"))
+    implementation(project(":core-model"))
+
     androidTestImplementation(project(":core-testing"))
 
     // Core Android dependencies
@@ -55,6 +58,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons)
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Instrumented tests
@@ -64,6 +68,9 @@ dependencies {
     // Google Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+
+    // Accompanist
+    implementation(libs.accompanist.permissions)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)

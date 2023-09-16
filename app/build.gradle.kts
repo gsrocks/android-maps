@@ -57,6 +57,9 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
 
     compileOptions {
@@ -90,6 +93,7 @@ android {
 dependencies {
     implementation(project(":core-ui"))
     implementation(project(":feature-userlocation"))
+    implementation(project(":core-common"))
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)

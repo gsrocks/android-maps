@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * UI tests for [UserLocationScreen].
+ * UI tests for [UserLocationRoute].
  */
 @RunWith(AndroidJUnit4::class)
 class UserLocationScreenTest {
@@ -22,9 +22,10 @@ class UserLocationScreenTest {
     @Before
     fun setup() {
         composeTestRule.setContent {
-            UserLocationScreen(FAKE_DATA, onSave = {})
+            UserLocationScreen()
         }
     }
+
     @Test
     fun firstItem_exists() {
         composeTestRule.onNodeWithText(FAKE_DATA.first()).assertExists().performClick()

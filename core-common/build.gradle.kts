@@ -5,14 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.gsrocks.locationmaps.core.data"
+    namespace = "com.gsrocks.locationmaps.core.common"
     compileSdk = 33
 
     defaultConfig {
         minSdk = 21
-
-        testInstrumentationRunner = "com.gsrocks.locationmaps.core.testing.HiltTestRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildFeatures {
@@ -33,17 +30,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-database"))
-    implementation(project(":core-geocoding"))
-    implementation(project(":core-model"))
+    implementation(libs.androidx.core.ktx)
 
-    // Arch Components
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Local tests: jUnit, coroutines, Android runner
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
 }

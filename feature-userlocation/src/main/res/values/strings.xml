@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_locations">Search locations</string>
+    <string name="back">Back</string>
+    <string name="clear_search">Clear search</string>
+    <string name="my_location">My location</string>
+    <string name="geocoding_failed">Geocoding failed</string>
+    <string name="failed_to_get_location">Failed to get location</string>
+</resources>
