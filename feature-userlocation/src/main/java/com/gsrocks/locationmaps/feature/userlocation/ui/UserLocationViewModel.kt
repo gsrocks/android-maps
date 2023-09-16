@@ -3,11 +3,13 @@ package com.gsrocks.locationmaps.feature.userlocation.ui
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.data.GeocodingRepository
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,8 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val TAG = "UserLocationViewModel"
-
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class UserLocationViewModel @Inject constructor(
     private val geocodingRepository: GeocodingRepository
@@ -33,7 +34,11 @@ class UserLocationViewModel @Inject constructor(
 
     private val _queryFlow = _uiState.map { it.query }
         .debounce(250.milliseconds)
-        .stateIn(viewModelScope, started = SharingStarted.WhileSubscribed(), String.empty)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = String.empty
+        )
 
     init {
         viewModelScope.launch {
@@ -109,6 +114,29 @@ class UserLocationViewModel @Inject constructor(
                     showError(R.string.failed_to_get_location)
                 }
             )
+        }
+    }
+
+    fun onMapClick(latLng: LatLng) {
+        viewModelScope.launch {
+            geocodingRepository.getAddressByCoordinates(latLng.latitude, latLng.longitude).fold(
+                onSuccess = { addresses ->
+                    addresses.firstOrNull()?.let { address ->
+                        _uiState.update { state ->
+                            state.copy(selectedAddressAddress = address)
+                        }
+                    }
+                },
+                onFailure = {
+                    showError(R.string.geocoding_failed)
+                }
+            )
+        }
+    }
+
+    fun onDismissBottomSheet() {
+        _uiState.update { state ->
+            state.copy(selectedAddressAddress = null)
         }
     }
 

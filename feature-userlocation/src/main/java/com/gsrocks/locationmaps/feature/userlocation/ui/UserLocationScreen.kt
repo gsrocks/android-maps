@@ -1,8 +1,14 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,20 +23,27 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -52,12 +65,13 @@ fun UserLocationRoute(
     viewModel: UserLocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     val snackbarHostState = remember { SnackbarHostState() }
+    val bottomSheetState = rememberModalBottomSheetState()
 
     UserLocationScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
+        bottomSheetState = bottomSheetState,
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onSearchActiveChange = viewModel::onSearchActiveChange,
         onSearchAction = viewModel::onSearchAction,
@@ -66,7 +80,9 @@ fun UserLocationRoute(
         onRationaleDismiss = viewModel::dismissLocationPermissionRationale,
         onSearchSuggestionClick = viewModel::onSearchSuggestionClick,
         onErrorDismiss = viewModel::errorShown,
-        onMyLocationClick = viewModel::onMyLocationClick
+        onMyLocationClick = viewModel::onMyLocationClick,
+        onDismissBottomSheet = viewModel::onDismissBottomSheet,
+        onMapClick = viewModel::onMapClick
     )
 }
 
@@ -74,6 +90,7 @@ fun UserLocationRoute(
 internal fun UserLocationScreen(
     uiState: UserLocationUiState,
     snackbarHostState: SnackbarHostState,
+    bottomSheetState: SheetState,
     onSearchQueryChange: (String) -> Unit,
     onSearchActiveChange: (Boolean) -> Unit,
     onSearchAction: (String) -> Unit,
@@ -82,7 +99,9 @@ internal fun UserLocationScreen(
     onRationaleDismiss: () -> Unit,
     onSearchSuggestionClick: (LocationAddress) -> Unit,
     onErrorDismiss: (Int) -> Unit,
-    onMyLocationClick: () -> Unit
+    onMyLocationClick: () -> Unit,
+    onDismissBottomSheet: () -> Unit,
+    onMapClick: (LatLng) -> Unit
 ) {
     SnackbarEffect(
         errorMessages = uiState.errorMessages,
@@ -167,7 +186,8 @@ internal fun UserLocationScreen(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             contentPadding = scaffoldPadding,
-            uiSettings = MapUiSettings(zoomControlsEnabled = false)
+            uiSettings = MapUiSettings(zoomControlsEnabled = false),
+            onMapClick = onMapClick
         ) {
             if (markerPosition != null) {
                 Marker(
@@ -175,6 +195,24 @@ internal fun UserLocationScreen(
                     title = "Singapore",
                     snippet = "Marker in Singapore",
                 )
+            }
+        }
+
+        if (uiState.selectedAddressAddress != null) {
+            ModalBottomSheet(
+                onDismissRequest = onDismissBottomSheet,
+                sheetState = bottomSheetState,
+                scrimColor = Color.Transparent,
+                containerColor = MaterialTheme.colorScheme.background,
+                windowInsets = WindowInsets(0)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(uiState.selectedAddressAddress.toString())
+                }
             }
         }
     }
@@ -339,6 +377,7 @@ private fun UserLocationScreenPreview() {
         UserLocationScreen(
             uiState = UserLocationUiState(),
             snackbarHostState = SnackbarHostState(),
+            bottomSheetState = SheetState(skipPartiallyExpanded = false),
             onSearchQueryChange = {},
             onSearchActiveChange = {},
             onSearchAction = {},
@@ -347,7 +386,9 @@ private fun UserLocationScreenPreview() {
             onRationaleDismiss = {},
             onSearchSuggestionClick = {},
             onErrorDismiss = {},
-            onMyLocationClick = {}
+            onMyLocationClick = {},
+            onDismissBottomSheet = {},
+            onMapClick = {}
         )
     }
 }

@@ -13,5 +13,6 @@ data class UserLocationUiState(
     val suggestions: List<LocationAddress> = emptyList(),
     val markerCoordinates: Pair<Double, Double>? = null,
     @StringRes val errorMessages: List<Int> = emptyList(),
-    val currentLocation: Coordinates? = null
+    val currentLocation: Coordinates? = null,
+    val selectedAddressAddress: LocationAddress? = null
 )
