@@ -33,13 +33,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +49,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -103,6 +106,8 @@ internal fun UserLocationScreen(
     onDismissBottomSheet: () -> Unit,
     onMapClick: (LatLng) -> Unit
 ) {
+    val context = LocalContext.current
+
     SnackbarEffect(
         errorMessages = uiState.errorMessages,
         snackbarHostState = snackbarHostState,
@@ -187,13 +192,17 @@ internal fun UserLocationScreen(
             cameraPositionState = cameraPositionState,
             contentPadding = scaffoldPadding,
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
-            onMapClick = onMapClick
+            onMapClick = onMapClick,
+            properties = MapProperties(
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+            )
         ) {
             if (markerPosition != null) {
                 Marker(
                     state = MarkerState(position = markerPosition),
                     title = "Singapore",
                     snippet = "Marker in Singapore",
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.billy_herrington)
                 )
             }
         }
