@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -201,6 +202,7 @@ internal fun UserLocationScreen(
                     state = MarkerState(position = markerPosition),
                     title = "Singapore",
                     snippet = "Marker in Singapore",
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.billy_herrington)
                 )
             }
         }
