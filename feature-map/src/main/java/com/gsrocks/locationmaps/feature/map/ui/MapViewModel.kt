@@ -1,4 +1,4 @@
-package com.gsrocks.locationmaps.feature.userlocation.ui
+package com.gsrocks.locationmaps.feature.map.ui
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -26,12 +26,12 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class UserLocationViewModel @Inject constructor(
+class MapViewModel @Inject constructor(
     private val geoRepository: GeoRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UserLocationUiState())
-    val uiState: StateFlow<UserLocationUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MapUiState())
+    val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
 
     private val _queryFlow = _uiState.map { it.query }
         .debounce(250.milliseconds)

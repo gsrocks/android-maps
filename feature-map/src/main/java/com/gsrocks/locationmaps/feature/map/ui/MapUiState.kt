@@ -1,4 +1,4 @@
-package com.gsrocks.locationmaps.feature.userlocation.ui
+package com.gsrocks.locationmaps.feature.map.ui
 
 import androidx.annotation.StringRes
 import com.gsrocks.locationmaps.core.common.empty
@@ -6,7 +6,7 @@ import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.DirectionRoute
 import com.gsrocks.locationmaps.core.model.LocationAddress
 
-data class UserLocationUiState(
+data class MapUiState(
     val query: String = String.empty,
     val searchActive: Boolean = false,
     val showLocationPermissionRationale: Boolean = false,

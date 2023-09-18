@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.gsrocks.locationmaps.feature.userlocation.ui
+package com.gsrocks.locationmaps.feature.map.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -65,14 +65,14 @@ import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
 import com.gsrocks.locationmaps.feature.userlocation.R
 
 @Composable
-fun UserLocationRoute(
-    viewModel: UserLocationViewModel = hiltViewModel()
+fun MapRoute(
+    viewModel: MapViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val bottomSheetState = rememberModalBottomSheetState()
 
-    UserLocationScreen(
+    MapScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         bottomSheetState = bottomSheetState,
@@ -91,8 +91,8 @@ fun UserLocationRoute(
 }
 
 @Composable
-internal fun UserLocationScreen(
-    uiState: UserLocationUiState,
+internal fun MapScreen(
+    uiState: MapUiState,
     snackbarHostState: SnackbarHostState,
     bottomSheetState: SheetState,
     onSearchQueryChange: (String) -> Unit,
@@ -390,10 +390,10 @@ private fun SnackbarEffect(
 
 @Preview
 @Composable
-private fun UserLocationScreenPreview() {
+private fun MapScreenPreview() {
     MapsLocationSampleTheme {
-        UserLocationScreen(
-            uiState = UserLocationUiState(),
+        MapScreen(
+            uiState = MapUiState(),
             snackbarHostState = SnackbarHostState(),
             bottomSheetState = SheetState(skipPartiallyExpanded = false),
             onSearchQueryChange = {},

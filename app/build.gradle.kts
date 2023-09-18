@@ -92,7 +92,7 @@ android {
 
 dependencies {
     implementation(project(":core-ui"))
-    implementation(project(":feature-userlocation"))
+    implementation(project(":feature-map"))
     implementation(project(":core-common"))
 
     // Core Android dependencies
