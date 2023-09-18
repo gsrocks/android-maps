@@ -1,12 +1,15 @@
-package com.gsrocks.locationmaps.core.geocoding.di
+package com.gsrocks.locationmaps.core.geo.di
 
 import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
-import com.gsrocks.locationmaps.core.geocoding.DefaultGeocodingDataSource
-import com.gsrocks.locationmaps.core.geocoding.DefaultLocationDataSource
-import com.gsrocks.locationmaps.core.geocoding.GeocodingDataSource
-import com.gsrocks.locationmaps.core.geocoding.LocationDataSource
+import com.google.maps.GeoApiContext
+import com.gsrocks.locationmaps.core.geo.DefaultGeocodingDataSource
+import com.gsrocks.locationmaps.core.geo.DirectionsDataSource
+import com.gsrocks.locationmaps.core.geo.FakeDirectionsDataSource
+import com.gsrocks.locationmaps.core.geo.GeocodingDataSource
+import com.gsrocks.locationmaps.core.geo.GmsLocationDataSource
+import com.gsrocks.locationmaps.core.geo.LocationDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,18 +19,22 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class GeocodingModule {
+class GeoModule {
     @Provides
     fun provideGeocoder(@ApplicationContext context: Context) = Geocoder(context)
 
     @Provides
     fun provideLocationProviderClient(@ApplicationContext context: Context) =
         LocationServices.getFusedLocationProviderClient(context)
+
+    @Provides
+    fun provideDirectionsDataSource(geoApiContext: GeoApiContext): DirectionsDataSource =
+        FakeDirectionsDataSource()
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface BindsGeocodingModule {
+interface BindsGeoModule {
     @Binds
     fun bindGeocodingDataSource(
         defaultGeocodingDataSource: DefaultGeocodingDataSource
@@ -35,6 +42,6 @@ interface BindsGeocodingModule {
 
     @Binds
     fun bindLocationDataSource(
-        defaultLocationDataSource: DefaultLocationDataSource
+        locationDataSource: GmsLocationDataSource
     ): LocationDataSource
 }

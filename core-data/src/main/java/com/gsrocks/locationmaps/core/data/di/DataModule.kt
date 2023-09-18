@@ -1,6 +1,6 @@
 package com.gsrocks.locationmaps.core.data.di
 
-import com.gsrocks.locationmaps.core.data.DefaultGeocodingRepository
+import com.gsrocks.locationmaps.core.data.DefaultGeoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import com.gsrocks.locationmaps.core.data.UserLocationRepository
 import com.gsrocks.locationmaps.core.data.DefaultUserLocationRepository
-import com.gsrocks.locationmaps.core.data.GeocodingRepository
+import com.gsrocks.locationmaps.core.data.GeoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,8 +25,8 @@ interface DataModule {
 
     @Binds
     fun bindsGeocodingRepository(
-        defaultGeocodingRepository: DefaultGeocodingRepository
-    ): GeocodingRepository
+        defaultGeocodingRepository: DefaultGeoRepository
+    ): GeoRepository
 }
 
 class FakeUserLocationRepository @Inject constructor() : UserLocationRepository {

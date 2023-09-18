@@ -18,12 +18,12 @@ plugins {
 
 android {
     namespace = "com.gsrocks.locationmaps"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.gsrocks.locationmaps"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -118,4 +118,6 @@ dependencies {
 
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.google.maps.services)
 }

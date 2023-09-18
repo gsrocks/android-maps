@@ -1,4 +1,4 @@
-package com.gsrocks.locationmaps.core.geocoding
+package com.gsrocks.locationmaps.core.geo
 
 import com.gsrocks.locationmaps.core.model.LocationAddress
 

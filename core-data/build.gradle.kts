@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.gsrocks.locationmaps.core.data"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
@@ -34,7 +34,7 @@ android {
 
 dependencies {
     implementation(project(":core-database"))
-    implementation(project(":core-geocoding"))
+    implementation(project(":core-geo"))
     implementation(project(":core-model"))
 
     // Arch Components

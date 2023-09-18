@@ -1,9 +1,9 @@
-package com.gsrocks.locationmaps.core.geocoding
+package com.gsrocks.locationmaps.core.geo
 
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
-import com.gsrocks.locationmaps.core.geocoding.mappers.asModel
+import com.gsrocks.locationmaps.core.geo.mappers.asModel
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
