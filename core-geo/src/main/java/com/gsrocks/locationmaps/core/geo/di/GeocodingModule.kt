@@ -1,12 +1,12 @@
-package com.gsrocks.locationmaps.core.geocoding.di
+package com.gsrocks.locationmaps.core.geo.di
 
 import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
-import com.gsrocks.locationmaps.core.geocoding.DefaultGeocodingDataSource
-import com.gsrocks.locationmaps.core.geocoding.DefaultLocationDataSource
-import com.gsrocks.locationmaps.core.geocoding.GeocodingDataSource
-import com.gsrocks.locationmaps.core.geocoding.LocationDataSource
+import com.gsrocks.locationmaps.core.geo.DefaultGeocodingDataSource
+import com.gsrocks.locationmaps.core.geo.DefaultLocationDataSource
+import com.gsrocks.locationmaps.core.geo.GeocodingDataSource
+import com.gsrocks.locationmaps.core.geo.LocationDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

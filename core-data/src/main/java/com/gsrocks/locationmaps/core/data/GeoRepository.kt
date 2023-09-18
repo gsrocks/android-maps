@@ -1,8 +1,8 @@
 package com.gsrocks.locationmaps.core.data
 
 import com.gsrocks.locationmaps.core.data.errors.MlsError
-import com.gsrocks.locationmaps.core.geocoding.GeocodingDataSource
-import com.gsrocks.locationmaps.core.geocoding.LocationDataSource
+import com.gsrocks.locationmaps.core.geo.GeocodingDataSource
+import com.gsrocks.locationmaps.core.geo.LocationDataSource
 import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import javax.inject.Inject
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GeocodingError : MlsError()
 class LocationError : MlsError()
 
-interface GeocodingRepository {
+interface GeoRepository {
     suspend fun getAddressByName(name: String): Result<List<LocationAddress>>
 
     suspend fun getAddressByCoordinates(
@@ -21,10 +21,10 @@ interface GeocodingRepository {
     suspend fun getCurrentLocation(): Result<Coordinates>
 }
 
-class DefaultGeocodingRepository @Inject constructor(
+class DefaultGeoRepository @Inject constructor(
     private val geocodingDataSource: GeocodingDataSource,
     private val locationDataSource: LocationDataSource
-) : GeocodingRepository {
+) : GeoRepository {
     override suspend fun getAddressByName(name: String): Result<List<LocationAddress>> {
         return try {
             val address = geocodingDataSource.getFromLocationName(name)

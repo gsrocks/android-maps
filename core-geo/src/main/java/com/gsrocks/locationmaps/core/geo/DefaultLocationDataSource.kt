@@ -1,4 +1,4 @@
-package com.gsrocks.locationmaps.core.geocoding
+package com.gsrocks.locationmaps.core.geo
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority

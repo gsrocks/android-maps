@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gsrocks.locationmaps.core.geocoding"
+    namespace = "com.gsrocks.locationmaps.core.geo"
     compileSdk = 33
 
     defaultConfig {

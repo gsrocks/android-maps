@@ -34,7 +34,7 @@ android {
 
 dependencies {
     implementation(project(":core-database"))
-    implementation(project(":core-geocoding"))
+    implementation(project(":core-geo"))
     implementation(project(":core-model"))
 
     // Arch Components

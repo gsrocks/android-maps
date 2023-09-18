@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.gsrocks.locationmaps.core.common.empty
-import com.gsrocks.locationmaps.core.data.GeocodingRepository
+import com.gsrocks.locationmaps.core.data.GeoRepository
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class UserLocationViewModel @Inject constructor(
-    private val geocodingRepository: GeocodingRepository
+    private val geoRepository: GeoRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserLocationUiState())
@@ -78,7 +78,7 @@ class UserLocationViewModel @Inject constructor(
 
     private fun onSearchQuery(query: String) {
         viewModelScope.launch {
-            geocodingRepository.getAddressByName(query).fold(
+            geoRepository.getAddressByName(query).fold(
                 onSuccess = { addresses ->
                     _uiState.update { state ->
                         state.copy(suggestions = addresses)
@@ -102,7 +102,7 @@ class UserLocationViewModel @Inject constructor(
 
     fun onMyLocationClick() {
         viewModelScope.launch {
-            geocodingRepository.getCurrentLocation().fold(
+            geoRepository.getCurrentLocation().fold(
                 onSuccess = { coordinates ->
                     _uiState.update { state ->
                         state.copy(
@@ -119,7 +119,7 @@ class UserLocationViewModel @Inject constructor(
 
     fun onMapClick(latLng: LatLng) {
         viewModelScope.launch {
-            geocodingRepository.getAddressByCoordinates(latLng.latitude, latLng.longitude).fold(
+            geoRepository.getAddressByCoordinates(latLng.latitude, latLng.longitude).fold(
                 onSuccess = { addresses ->
                     addresses.firstOrNull()?.let { address ->
                         _uiState.update { state ->
