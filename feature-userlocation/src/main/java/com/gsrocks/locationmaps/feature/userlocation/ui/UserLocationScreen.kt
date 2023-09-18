@@ -58,6 +58,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
@@ -203,6 +204,14 @@ internal fun UserLocationScreen(
                     title = "Singapore",
                     snippet = "Marker in Singapore",
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.billy_herrington)
+                )
+            }
+
+            if (uiState.route != null) {
+                Polyline(
+                    points = uiState.route.polylinePoints.orEmpty()
+                        .map { LatLng(it.latitude, it.longitude) },
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

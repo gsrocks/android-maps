@@ -2,5 +2,6 @@ package com.gsrocks.locationmaps.core.model
 
 data class DirectionRoute(
     val bounds: MapBounds,
-    val legs: List<DirectionLeg>
+    val legs: List<DirectionLeg>,
+    val polylinePoints: List<Coordinates>?
 )

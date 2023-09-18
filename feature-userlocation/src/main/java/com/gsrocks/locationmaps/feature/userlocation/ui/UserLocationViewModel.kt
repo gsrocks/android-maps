@@ -1,6 +1,5 @@
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,10 +51,15 @@ class UserLocationViewModel @Inject constructor(
                 Coordinates(48.472556, 35.042278),
                 Coordinates(48.49869502339745, 35.06941949015215)
             ).fold(
-                onSuccess = { coordinates ->
-                    Log.d("LocationViewModel", "Directions: $coordinates")
+                onSuccess = { route ->
+                    _uiState.update { state ->
+                        state.copy(route = route)
+                    }
                 },
                 onFailure = {
+                    _uiState.update { state ->
+                        state.copy(route = null)
+                    }
                     showError(R.string.failed_to_get_directions)
                 }
             )

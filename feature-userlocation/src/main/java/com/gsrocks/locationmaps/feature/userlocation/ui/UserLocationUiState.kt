@@ -3,6 +3,7 @@ package com.gsrocks.locationmaps.feature.userlocation.ui
 import androidx.annotation.StringRes
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.model.Coordinates
+import com.gsrocks.locationmaps.core.model.DirectionRoute
 import com.gsrocks.locationmaps.core.model.LocationAddress
 
 data class UserLocationUiState(
@@ -14,5 +15,6 @@ data class UserLocationUiState(
     val markerCoordinates: Pair<Double, Double>? = null,
     @StringRes val errorMessages: List<Int> = emptyList(),
     val currentLocation: Coordinates? = null,
-    val selectedAddressAddress: LocationAddress? = null
+    val selectedAddressAddress: LocationAddress? = null,
+    val route: DirectionRoute? = null
 )

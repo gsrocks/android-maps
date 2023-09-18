@@ -6,8 +6,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.maps.GeoApiContext
 import com.gsrocks.locationmaps.core.geo.DefaultGeocodingDataSource
 import com.gsrocks.locationmaps.core.geo.DirectionsDataSource
+import com.gsrocks.locationmaps.core.geo.FakeDirectionsDataSource
 import com.gsrocks.locationmaps.core.geo.GeocodingDataSource
-import com.gsrocks.locationmaps.core.geo.GmsDirectionsDataSource
 import com.gsrocks.locationmaps.core.geo.GmsLocationDataSource
 import com.gsrocks.locationmaps.core.geo.LocationDataSource
 import dagger.Binds
@@ -29,7 +29,7 @@ class GeocodingModule {
 
     @Provides
     fun provideDirectionsDataSource(geoApiContext: GeoApiContext): DirectionsDataSource =
-        GmsDirectionsDataSource(geoApiContext)
+        FakeDirectionsDataSource()
 }
 
 @Module

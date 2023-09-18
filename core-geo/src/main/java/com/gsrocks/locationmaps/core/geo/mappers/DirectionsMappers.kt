@@ -1,5 +1,6 @@
 package com.gsrocks.locationmaps.core.geo.mappers
 
+import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.Bounds
 import com.google.maps.model.DirectionsLeg
 import com.google.maps.model.DirectionsRoute
@@ -9,7 +10,8 @@ import com.gsrocks.locationmaps.core.model.MapBounds
 
 fun DirectionsRoute.asModel() = DirectionRoute(
     bounds = bounds.asModel(),
-    legs = legs.map { it.asModel() }
+    legs = legs.map { it.asModel() },
+    polylinePoints = PolylineEncoding.decode(overviewPolyline.encodedPath)?.map { it.asModel() }
 )
 
 fun Bounds.asModel() = MapBounds(
