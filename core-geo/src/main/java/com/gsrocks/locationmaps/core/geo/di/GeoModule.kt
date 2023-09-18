@@ -19,7 +19,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class GeocodingModule {
+class GeoModule {
     @Provides
     fun provideGeocoder(@ApplicationContext context: Context) = Geocoder(context)
 
@@ -34,7 +34,7 @@ class GeocodingModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface BindsGeocodingModule {
+interface BindsGeoModule {
     @Binds
     fun bindGeocodingDataSource(
         defaultGeocodingDataSource: DefaultGeocodingDataSource
