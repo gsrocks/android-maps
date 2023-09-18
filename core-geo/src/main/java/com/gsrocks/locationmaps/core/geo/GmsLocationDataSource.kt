@@ -10,7 +10,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class DefaultLocationDataSource @Inject constructor(
+class GmsLocationDataSource @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
     private val locationProviderClient: FusedLocationProviderClient
 ) : LocationDataSource {
