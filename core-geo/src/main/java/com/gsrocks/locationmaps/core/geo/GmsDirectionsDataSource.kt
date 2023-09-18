@@ -7,7 +7,7 @@ import com.gsrocks.locationmaps.core.geo.mappers.asModel
 import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.DirectionRoute
 
-class GmsDirectionsDataSourceImpl(
+class GmsDirectionsDataSource(
     private val geoApiContext: GeoApiContext
 ) : DirectionsDataSource {
     override suspend fun getDirectionsBetween(
