@@ -118,4 +118,6 @@ dependencies {
 
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.google.maps.services)
 }

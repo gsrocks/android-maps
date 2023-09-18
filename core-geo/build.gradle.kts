@@ -40,4 +40,6 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(libs.play.services.location)
+    implementation(libs.slf4j.simple)
+    implementation(libs.google.maps.services)
 }

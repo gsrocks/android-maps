@@ -1,11 +1,13 @@
 package com.gsrocks.locationmaps.feature.userlocation.ui
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.data.GeoRepository
+import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,6 +45,20 @@ class UserLocationViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _queryFlow.collectLatest { onSearchQuery(it) }
+        }
+
+        viewModelScope.launch {
+            geoRepository.getDirectionsBetween(
+                Coordinates(48.472556, 35.042278),
+                Coordinates(48.49869502339745, 35.06941949015215)
+            ).fold(
+                onSuccess = { coordinates ->
+                    Log.d("LocationViewModel", "Directions: $coordinates")
+                },
+                onFailure = {
+                    showError(R.string.failed_to_get_directions)
+                }
+            )
         }
     }
 
