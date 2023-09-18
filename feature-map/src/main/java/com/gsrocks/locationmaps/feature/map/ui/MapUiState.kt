@@ -1,6 +1,8 @@
 package com.gsrocks.locationmaps.feature.map.ui
 
 import androidx.annotation.StringRes
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.clustering.ClusterItem
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.DirectionRoute
@@ -16,5 +18,21 @@ data class MapUiState(
     @StringRes val errorMessages: List<Int> = emptyList(),
     val currentLocation: Coordinates? = null,
     val selectedAddressAddress: LocationAddress? = null,
-    val route: DirectionRoute? = null
+    val route: DirectionRoute? = null,
+    val markers: List<SimpleClusterItem> = emptyList()
 )
+
+data class SimpleClusterItem(
+    val itemPosition: LatLng,
+    val itemTitle: String,
+    val itemSnippet: String,
+) : ClusterItem {
+    override fun getPosition(): LatLng =
+        itemPosition
+
+    override fun getTitle(): String =
+        itemTitle
+
+    override fun getSnippet(): String =
+        itemSnippet
+}

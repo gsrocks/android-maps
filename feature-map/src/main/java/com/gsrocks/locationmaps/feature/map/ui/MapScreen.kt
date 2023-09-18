@@ -2,16 +2,21 @@
 
 package com.gsrocks.locationmaps.feature.map.ui
 
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -30,6 +35,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -37,13 +43,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -56,13 +66,17 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.gsrocks.locationmaps.core.model.LocationAddress
 import com.gsrocks.locationmaps.core.ui.MapsLocationSampleTheme
 import com.gsrocks.locationmaps.feature.userlocation.R
+
+private const val TAG = "MapScreen"
 
 @Composable
 fun MapRoute(
@@ -90,6 +104,7 @@ fun MapRoute(
     )
 }
 
+@OptIn(MapsComposeExperimentalApi::class)
 @Composable
 internal fun MapScreen(
     uiState: MapUiState,
@@ -214,6 +229,39 @@ internal fun MapScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
+            Clustering(
+                items = uiState.markers,
+                onClusterClick = {
+                    Log.d(TAG, "Cluster clicked! $it")
+                    false
+                },
+                onClusterItemClick = {
+                    Log.d(TAG, "Cluster item clicked! $it")
+                    false
+                },
+                onClusterItemInfoWindowClick = {
+                    Log.d(TAG, "Cluster item info window clicked! $it")
+                },
+                clusterContent = { cluster ->
+                    Surface(
+                        Modifier.size(40.dp),
+                        shape = CircleShape,
+                        color = Color.Blue,
+                        contentColor = Color.White,
+                        border = BorderStroke(1.dp, Color.White)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                "%,d".format(cluster.size),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                },
+            )
         }
 
         if (uiState.selectedAddressAddress != null) {

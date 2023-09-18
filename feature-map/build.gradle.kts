@@ -67,6 +67,7 @@ dependencies {
 
     // Google Maps
     implementation(libs.maps.compose)
+    implementation(libs.maps.compose.utils)
     implementation(libs.play.services.maps)
 
     // Accompanist

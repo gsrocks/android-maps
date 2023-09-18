@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.appcompat)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
@@ -119,5 +120,6 @@ dependencies {
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    implementation(libs.slf4j.simple)
     implementation(libs.google.maps.services)
 }

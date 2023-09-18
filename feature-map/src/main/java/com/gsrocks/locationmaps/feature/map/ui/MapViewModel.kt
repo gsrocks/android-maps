@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
@@ -63,6 +64,19 @@ class MapViewModel @Inject constructor(
                     showError(R.string.failed_to_get_directions)
                 }
             )
+        }
+
+        val startPoint = Coordinates(48.450234, 35.046564)
+        val items = mutableListOf<SimpleClusterItem>()
+        for (i in 1..10) {
+            val position = LatLng(
+                startPoint.latitude + Random.nextFloat(),
+                startPoint.longitude + Random.nextFloat(),
+            )
+            items.add(SimpleClusterItem(position, "Marker $i", "$i"))
+        }
+        _uiState.update { state ->
+            state.copy(markers = items)
         }
     }
 
