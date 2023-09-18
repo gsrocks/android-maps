@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.gsrocks.locationmaps.test.navigation"
-    compileSdk = 33
+    compileSdk = 34
     targetProjectPath = ":app"
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
 
         testInstrumentationRunner = "com.gsrocks.locationmaps.core.testing.HiltTestRunner"
     }
