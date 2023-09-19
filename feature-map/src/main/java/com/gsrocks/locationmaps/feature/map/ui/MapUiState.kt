@@ -17,7 +17,7 @@ data class MapUiState(
     val markerCoordinates: Pair<Double, Double>? = null,
     @StringRes val errorMessages: List<Int> = emptyList(),
     val currentLocation: Coordinates? = null,
-    val selectedAddressAddress: LocationAddress? = null,
+    val clickedLocation: ClickedLocationState? = null,
     val route: DirectionRoute? = null,
     val markers: List<SimpleClusterItem> = emptyList()
 )
@@ -36,3 +36,10 @@ data class SimpleClusterItem(
     override fun getSnippet(): String =
         itemSnippet
 }
+
+data class ClickedLocationState(
+    val coordinates: Coordinates,
+    val title: String? = null,
+    val description: String? = null,
+    val saved: Boolean = false,
+)

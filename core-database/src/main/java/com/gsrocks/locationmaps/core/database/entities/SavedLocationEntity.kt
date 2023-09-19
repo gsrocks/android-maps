@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class SavedLocationEntity(
     val latitude: Double,
     val longitude: Double,
-    val title: String,
+    val title: String? = null,
     val description: String? = null,
     @PrimaryKey(autoGenerate = true)
     var uid: Int = 0

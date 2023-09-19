@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.gsrocks.locationmaps.core.common.empty
 import com.gsrocks.locationmaps.core.data.GeoRepository
+import com.gsrocks.locationmaps.core.data.SavedLocationRepository
 import com.gsrocks.locationmaps.core.model.Coordinates
 import com.gsrocks.locationmaps.core.model.LocationAddress
+import com.gsrocks.locationmaps.core.model.SavedLocation
 import com.gsrocks.locationmaps.feature.userlocation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,14 +25,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val geoRepository: GeoRepository
+    private val geoRepository: GeoRepository,
+    private val savedLocationRepository: SavedLocationRepository
 ) : ViewModel() {
+
+    private var reverseGeocodeJob: Job? = null
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
@@ -66,17 +71,23 @@ class MapViewModel @Inject constructor(
             )
         }
 
-        val startPoint = Coordinates(48.450234, 35.046564)
-        val items = mutableListOf<SimpleClusterItem>()
-        for (i in 1..10) {
-            val position = LatLng(
-                startPoint.latitude + Random.nextFloat(),
-                startPoint.longitude + Random.nextFloat(),
-            )
-            items.add(SimpleClusterItem(position, "Marker $i", "$i"))
-        }
-        _uiState.update { state ->
-            state.copy(markers = items)
+        viewModelScope.launch {
+            savedLocationRepository.savedLocations.collectLatest { locations ->
+                _uiState.update { state ->
+                    state.copy(
+                        markers = locations.map {
+                            SimpleClusterItem(
+                                itemPosition = LatLng(
+                                    it.coordinates.latitude,
+                                    it.coordinates.longitude
+                                ),
+                                itemTitle = it.title.orEmpty(),
+                                itemSnippet = it.description.orEmpty()
+                            )
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -128,7 +139,7 @@ class MapViewModel @Inject constructor(
     fun onSearchSuggestionClick(locationAddress: LocationAddress) {
         _uiState.update {
             it.copy(
-                markerCoordinates = locationAddress.latitude to locationAddress.longitude,
+                markerCoordinates = locationAddress.coordinates.latitude to locationAddress.coordinates.longitude,
                 searchActive = false
             )
         }
@@ -152,12 +163,33 @@ class MapViewModel @Inject constructor(
     }
 
     fun onMapClick(latLng: LatLng) {
-        viewModelScope.launch {
+        reverseGeocodeJob?.cancel()
+
+        _uiState.update { state ->
+            state.copy(
+                clickedLocation = ClickedLocationState(
+                    coordinates = Coordinates(
+                        latLng.latitude,
+                        latLng.longitude
+                    ),
+                    saved = _uiState.value.markers.any { it.itemPosition == latLng }
+                )
+            )
+        }
+        reverseGeocodeJob = viewModelScope.launch {
             geoRepository.getAddressByCoordinates(latLng.latitude, latLng.longitude).fold(
                 onSuccess = { addresses ->
                     addresses.firstOrNull()?.let { address ->
                         _uiState.update { state ->
-                            state.copy(selectedAddressAddress = address)
+                            val locationState = state.clickedLocation.let {
+                                it?.copy(
+                                    title = address.featureName.orEmpty()
+                                ) ?: ClickedLocationState(
+                                    coordinates = address.coordinates,
+                                    title = address.featureName.orEmpty()
+                                )
+                            }
+                            state.copy(clickedLocation = locationState)
                         }
                     }
                 },
@@ -170,7 +202,17 @@ class MapViewModel @Inject constructor(
 
     fun onDismissBottomSheet() {
         _uiState.update { state ->
-            state.copy(selectedAddressAddress = null)
+            state.copy(clickedLocation = null)
+        }
+    }
+
+    fun onToggleSavedLocation() {
+        _uiState.value.clickedLocation?.let {
+            viewModelScope.launch {
+                savedLocationRepository.add(
+                    SavedLocation(it.coordinates, it.title, it.description)
+                )
+            }
         }
     }
 
