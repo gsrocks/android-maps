@@ -4,9 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import com.gsrocks.locationmaps.core.data.UserLocationRepository
+import com.gsrocks.locationmaps.core.data.SavedLocationRepository
 import com.gsrocks.locationmaps.core.data.di.DataModule
-import com.gsrocks.locationmaps.core.data.di.FakeUserLocationRepository
+import com.gsrocks.locationmaps.core.data.di.FakeSavedLocationRepository
 
 @Module
 @TestInstallIn(
@@ -17,6 +17,6 @@ interface FakeDataModule {
 
     @Binds
     abstract fun bindRepository(
-        fakeRepository: FakeUserLocationRepository
-    ): UserLocationRepository
+        fakeRepository: FakeSavedLocationRepository
+    ): SavedLocationRepository
 }

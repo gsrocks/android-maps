@@ -3,7 +3,7 @@ package com.gsrocks.locationmaps.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.gsrocks.locationmaps.core.database.AppDatabase
-import com.gsrocks.locationmaps.core.database.UserLocationDao
+import com.gsrocks.locationmaps.core.database.daos.SavedLocationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,8 +15,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
     @Provides
-    fun provideUserLocationDao(appDatabase: AppDatabase): UserLocationDao {
-        return appDatabase.userLocationDao()
+    fun provideSavedLocationDao(appDatabase: AppDatabase): SavedLocationDao {
+        return appDatabase.savedLocationDao()
     }
 
     @Provides
@@ -25,7 +25,7 @@ class DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "UserLocation"
+            "locations_database"
         ).build()
     }
 }

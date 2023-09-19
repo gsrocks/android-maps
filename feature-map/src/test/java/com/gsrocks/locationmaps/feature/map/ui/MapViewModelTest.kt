@@ -17,7 +17,9 @@
 package com.gsrocks.locationmaps.feature.map.ui
 
 
-import com.gsrocks.locationmaps.core.data.UserLocationRepository
+import com.gsrocks.locationmaps.core.data.SavedLocationRepository
+import com.gsrocks.locationmaps.core.model.Coordinates
+import com.gsrocks.locationmaps.core.model.SavedLocation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -42,14 +44,20 @@ class MapViewModelTest {
     }*/
 }
 
-private class FakeUserLocationRepository : UserLocationRepository {
+private class FakeSavedLocationRepository : SavedLocationRepository {
 
-    private val data = mutableListOf<String>()
+    private val data = mutableListOf<SavedLocation>()
 
-    override val userLocations: Flow<List<String>>
+    override val savedLocations: Flow<List<SavedLocation>>
         get() = flow { emit(data.toList()) }
 
-    override suspend fun add(name: String) {
-        data.add(0, name)
+    override suspend fun add(savedLocation: SavedLocation) {
+        data.add(
+            0,
+            SavedLocation(
+                coordinates = Coordinates(48.442566, 35.052959),
+                title = "Home"
+            )
+        )
     }
 }
