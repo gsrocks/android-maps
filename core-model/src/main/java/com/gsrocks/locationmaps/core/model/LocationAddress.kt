@@ -1,8 +1,7 @@
 package com.gsrocks.locationmaps.core.model
 
 data class LocationAddress(
-    val latitude: Double,
-    val longitude: Double,
+    val coordinates: Coordinates,
     val featureName: String?,
     val countryName: String?
 )

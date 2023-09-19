@@ -1,15 +1,17 @@
 package com.gsrocks.locationmaps.core.data.di
 
 import com.gsrocks.locationmaps.core.data.DefaultGeoRepository
+import com.gsrocks.locationmaps.core.data.DefaultSavedLocationRepository
+import com.gsrocks.locationmaps.core.data.GeoRepository
+import com.gsrocks.locationmaps.core.data.SavedLocationRepository
+import com.gsrocks.locationmaps.core.model.Coordinates
+import com.gsrocks.locationmaps.core.model.SavedLocation
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import com.gsrocks.locationmaps.core.data.UserLocationRepository
-import com.gsrocks.locationmaps.core.data.DefaultUserLocationRepository
-import com.gsrocks.locationmaps.core.data.GeoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,22 +21,27 @@ interface DataModule {
 
     @Singleton
     @Binds
-    fun bindsUserLocationRepository(
-        userLocationRepository: DefaultUserLocationRepository
-    ): UserLocationRepository
+    fun bindsSavedLocationRepository(
+        savedLocationRepository: DefaultSavedLocationRepository
+    ): SavedLocationRepository
 
     @Binds
-    fun bindsGeocodingRepository(
-        defaultGeocodingRepository: DefaultGeoRepository
+    fun bindsGeoRepository(
+        defaultGeoRepository: DefaultGeoRepository
     ): GeoRepository
 }
 
-class FakeUserLocationRepository @Inject constructor() : UserLocationRepository {
-    override val userLocations: Flow<List<String>> = flowOf(fakeUserLocations)
+class FakeSavedLocationRepository @Inject constructor() : SavedLocationRepository {
+    override val savedLocations: Flow<List<SavedLocation>> = flowOf(fakeUserLocations)
 
-    override suspend fun add(name: String) {
+    override suspend fun add(savedLocation: SavedLocation) {
         throw NotImplementedError()
     }
 }
 
-val fakeUserLocations = listOf("One", "Two", "Three")
+val fakeUserLocations = listOf(
+    SavedLocation(
+        coordinates = Coordinates(48.442566, 35.052959),
+        title = "Home"
+    )
+)
