@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
 
         testInstrumentationRunner = "com.gsrocks.locationmaps.core.testing.HiltTestRunner"
         consumerProguardFiles("consumer-rules.pro")

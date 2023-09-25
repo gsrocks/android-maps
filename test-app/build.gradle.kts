@@ -10,7 +10,7 @@ android {
     targetProjectPath = ":app"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
 
         testInstrumentationRunner = "com.gsrocks.locationmaps.core.testing.HiltTestRunner"
