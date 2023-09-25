@@ -160,6 +160,8 @@ class MapViewModel @Inject constructor(
                 }
             )
         }
+
+        onSetGeofencePressed()
     }
 
     fun onMapClick(latLng: LatLng) {
@@ -214,6 +216,15 @@ class MapViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun onSetGeofencePressed() {
+        geoRepository.createGeofence(
+            "1",
+            Coordinates(48.466594, 35.057356),
+            100f,
+            30_000
+        )
     }
 
     fun errorShown(messageId: Int) {

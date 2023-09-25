@@ -10,6 +10,8 @@ import com.gsrocks.locationmaps.core.geo.FakeDirectionsDataSource
 import com.gsrocks.locationmaps.core.geo.GeocodingDataSource
 import com.gsrocks.locationmaps.core.geo.GmsLocationDataSource
 import com.gsrocks.locationmaps.core.geo.LocationDataSource
+import com.gsrocks.locationmaps.core.geo.geofencing.DefaultGeofencingDataSource
+import com.gsrocks.locationmaps.core.geo.geofencing.GeofencingDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,6 +32,10 @@ class GeoModule {
     @Provides
     fun provideDirectionsDataSource(geoApiContext: GeoApiContext): DirectionsDataSource =
         FakeDirectionsDataSource()
+
+    @Provides
+    fun provideGeofencingClient(@ApplicationContext context: Context) =
+        LocationServices.getGeofencingClient(context)
 }
 
 @Module
@@ -44,4 +50,9 @@ interface BindsGeoModule {
     fun bindLocationDataSource(
         locationDataSource: GmsLocationDataSource
     ): LocationDataSource
+
+    @Binds
+    fun bindGeofencingDataSource(
+        geofencingDataSource: DefaultGeofencingDataSource
+    ): GeofencingDataSource
 }
